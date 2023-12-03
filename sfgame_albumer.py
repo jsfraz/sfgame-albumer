@@ -24,7 +24,7 @@ class SFGameAlbumer(QWidget):
         self.spin_box = QSpinBox()
 
         # Set the range of allowed values
-        self.spin_box.setRange(1, 100000)
+        self.spin_box.setRange(1, 1000000)
         self.spin_box.setValue(1)
 
         # Mushroom checkbox
@@ -74,7 +74,7 @@ class SFGameAlbumer(QWidget):
 
         # Adjust window size to fit content and make it unresizable
         self.adjustSize()
-        self.setFixedSize(self.width(), self.height())
+        self.setFixedSize(350, self.height())
 
         # Game controller
         self.controller = SFGameController(self.version, self.spin_box, self.checkbox, self.scroll_down, self.scroll_up, self.log_display, self.button)

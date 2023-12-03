@@ -1,3 +1,4 @@
+import datetime
 from threading import Thread
 import time
 from PyQt5.QtWidgets import QSpinBox, QTextEdit, QPushButton, QRadioButton, QCheckBox
@@ -5,6 +6,11 @@ import psutil
 import pygetwindow as gw
 import pyautogui
 import re
+from datetime import datetime
+from PIL import Image
+from skimage.metrics import structural_similarity as ssim
+import numpy as np
+from PyQt5.QtGui import QTextCursor
 
 # https://forum-int.sfgame.net/forum/game-support/faq/4983-keyboard-controls-shortkeys
 
@@ -14,6 +20,7 @@ class SFGameController():
         #Coordinates of somethig?
         self.coordinates = {
             "hof_search": (560, 790),
+            "outside": (200, 95),
         }
 
         self.version = v
@@ -24,6 +31,7 @@ class SFGameController():
         self.log_display = ld
         self.button = b
 
+        # TODO upozornění na svatý grál
         self.log_display.append("Vítej v programu SFGame Albumer v" + self.version + "!")
     
     # Enables/disables widgets
@@ -44,7 +52,6 @@ class SFGameController():
         self.running = not self.running
         # Start
         if self.running:
-            self.log_display.setText("")
             self.control_thread = Thread(target=self.control, name="control")
             self.control_thread.start()
 
@@ -54,11 +61,11 @@ class SFGameController():
         game_running = self.is_game_running()
         # Not running
         if not game_running:
-            self.log_display.append("Bežící hra nenalezena.")
+            self.log("Bežící hra nenalezena.")
             self.start_stop()
             return
         # Running
-        self.log_display.append("Nalazena bežící hra.")
+        self.log("Nalazena bežící hra.")
         # Activate game window
         self.focus_game()
         # Open hof
@@ -68,22 +75,43 @@ class SFGameController():
         # Paste position
         time.sleep(0.1)
         pyautogui.write(str(self.spin_box.value()))
-        # TODO press enter unit position is searched, sfclient is buggy
+        ssi_search = 0
         # Search position
-        time.sleep(0.1)
-        pyautogui.press("enter")
+        while ssi_search < 0.99:
+            time.sleep(0.1)
+            self.log("Vyheldávám pozici " + str(self.spin_box.value()) + ".")
+            pyautogui.press("enter")
+            time.sleep(0.1)
+            ssi_search = self.compare_heroes(0.1)
+        # Click outside search input
+        self.click("outside")
         # Main loop
         while self.running:
             game_running = self.is_game_running()
             # Not running
             if not game_running:
-                self.log_display.append("Bežící hra nenalezena.")
+                self.log("Bežící hra nenalezena.")
                 self.start_stop()
                 return
             # Activate game window
             self.focus_game()
+            # Cycle heroes until item is found
+            time.sleep(0.1)
+            self.log("Hledám item(y).")
+            hero_ssi = self.compare_heroes(1)
+            while hero_ssi == 1:
+                # Scroll
+                if self.scroll_down.clicked:
+                    pyautogui.press('down')
+                else:
+                    pyautogui.press('up')
+                time.sleep(0.1)
+                hero_ssi = self.compare_heroes(1)
+            self.log("Item(y) nalezen(y).")
             # Open fight
             time.sleep(0.1)
+            # TODO vypsat jméno hráče
+            self.log("Spouštím souboj.")
             pyautogui.press("num9")
             # Confirm fight
             time.sleep(0.1)
@@ -92,10 +120,20 @@ class SFGameController():
             time.sleep(0.1)
             pyautogui.press("enter")
             # Confirm victory (or loss xd)
-            time.sleep(0.1)
+            time.sleep(0.5)
+            # TODO vypsat výhru/prohru
+            self.log("Ukončuju souboj.")
             pyautogui.press("enter")
             # Stop
             self.start_stop()
+
+    # Log
+    def log(self, message: str):
+        self.log_display.append(datetime.now().strftime('%Y-%m-%d %H:%M:%S') +  " " + message)
+        # Scroll
+        cursor = QTextCursor(self.log_display.document())
+        cursor.movePosition(QTextCursor.End)
+        self.log_display.setTextCursor(cursor)
 
     # Check if the game is running
     def is_game_running(self) -> bool:
@@ -111,10 +149,11 @@ class SFGameController():
         try:
             gw.Window(self.target_window._hWnd).activate()
         except Exception as e:
-            self.log_display.append(str(e))
+            self.log(str(e))
     
     # Opens hall of fame
     def open_hof(self):
+        self.log("Otevírám síni slávy.")
         pyautogui.press("esc")
         time.sleep(0.1)
         pyautogui.press("h")
@@ -131,4 +170,34 @@ class SFGameController():
             else:
                 raise Exception("Klíč souřadnic nenalezen.")
         except Exception as e:
-            self.log_display.append(str(e))
+            self.log(str(e))
+    
+    # Take screenshot of the game
+    def screenshot(self):
+        x, y, width, height = self.target_window.left, self.target_window.top, self.target_window.width, self.target_window.height
+        screenshot = pyautogui.screenshot(region=(x, y, width, height))
+        return screenshot
+    
+    # Comapre images and return SSI index
+    def return_ssi(self, image1: Image, image2: Image) -> float:
+        # Convert to grayscale and normalize pixel values
+        image1_gray = np.array(image1.convert('L')) / 255.0
+        image2_gray = np.array(image2.convert('L')) / 255.0
+        # Get smaller size
+        min_dimension = min(image1_gray.shape[0], image1_gray.shape[1])
+        # Setting the window size smaller or equal to the smaller dimension
+        win_size = min_dimension if min_dimension % 2 == 1 else min_dimension - 1
+        # Specification of the data_range parameter
+        data_range = 1.0
+        ssi_index, _ = ssim(image1_gray, image2_gray, win_size=win_size, data_range=data_range, full=True)
+        return ssi_index
+    
+    # Compare two hero screenshots with time delay
+    def compare_heroes(self, delay_between_screenshots: int) -> float:
+        left, top, width, height = 890, 55, 530, 450
+        screenshot1 = self.screenshot().crop((left, top, left + width, top + height))
+        time.sleep(delay_between_screenshots)
+        screenshot2 = self.screenshot().crop((left, top, left + width, top + height))
+        # Compare images
+        ssi = self.return_ssi(screenshot1, screenshot2)
+        return ssi
