@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QWidget, QLabel, QSpinBox, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QRadioButton
+from PyQt5.QtWidgets import QWidget, QLabel, QSpinBox, QVBoxLayout, QHBoxLayout, QTextEdit, QPushButton, QRadioButton, QCheckBox
 from PyQt5.QtGui import QIcon
 import ctypes
 
@@ -15,7 +15,6 @@ class SFGameAlbumer(QWidget):
         # Window title
         self.setWindowTitle("SFGame albumer")
 
-        # TODO: Set only as Windows code
         # App icon fix https://stackoverflow.com/a/1552105/19371130
         myappid = "jsfraz.sfgame-albumer." + self.version  # arbitrary string
         ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(myappid)
@@ -27,6 +26,9 @@ class SFGameAlbumer(QWidget):
         # Set the range of allowed values
         self.spin_box.setRange(1, 100000)
         self.spin_box.setValue(1)
+
+        # Mushroom checkbox
+        self.checkbox = QCheckBox("Houbovat")
 
         # Radio buttons
         self.scroll_down = QRadioButton("Scrollovat dolů")
@@ -51,6 +53,9 @@ class SFGameAlbumer(QWidget):
         # Add the horizontal layout to the main vertical layout
         layout.addLayout(horizontal_layout)
 
+        # Add mushroom checkbox
+        layout.addWidget(self.checkbox)
+
         # Horizontal layout for radio buttons
         radio_layout = QHBoxLayout()
         radio_layout.addWidget(self.scroll_down)
@@ -72,5 +77,5 @@ class SFGameAlbumer(QWidget):
         self.setFixedSize(self.width(), self.height())
 
         # Game controller
-        self.controller = SFGameController(self.version, self.spin_box, self.scroll_down, self.scroll_up, self.log_display, self.button)
+        self.controller = SFGameController(self.version, self.spin_box, self.checkbox, self.scroll_down, self.scroll_up, self.log_display, self.button)
         self.button.clicked.connect(self.controller.start_stop)
