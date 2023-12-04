@@ -21,8 +21,8 @@ class SFGameController():
         self.running = False
         # Mouse coordinates
         self.coordinates = {
-            "hof_search": (560, 790),
-            "outside": (200, 95),
+            "hof_search": (360, 790),
+            "outside": (10, 50),
         }
 
         self.version = v
