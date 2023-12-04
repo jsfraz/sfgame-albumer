@@ -3,3 +3,5 @@ psutil
 pygetwindow
 pyautogui
 Pillow
+pyinstaller
+scikit-image

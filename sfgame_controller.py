@@ -34,7 +34,7 @@ class SFGameController():
         self.button = b
 
         self.log_display.append("Vítej v programu SFGame Albumer v" + self.version + "!")
-        self.log_display.append("Program funguje pro Steam verzi hry. Pro chod je vyžadován Svatý grál. Je doporučeno vypnout upozornění zpráv. Pokud nepoužíváte houby, spouštějte program pouze pokud není v aréně odpočet. Program také může dělat chyby a vyhodnocovat obraz špatně. Použití na vlastní nebezpečí.")
+        self.log_display.append("Program funguje pro Steam verzi hry v okně. Pro chod je vyžadován Svatý grál. Je doporučeno vypnout upozornění zpráv. Pokud nepoužíváte houby, spouštějte program pouze pokud není v aréně odpočet. Program také může dělat chyby a vyhodnocovat obraz špatně. Použití na vlastní nebezpečí.")
     
     # Enables/disables widgets
     def set_widgets_enabled(self, enabled: bool):
