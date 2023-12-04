@@ -75,18 +75,13 @@ class SFGameController():
         self.focus_game()
         # Open hof
         self.open_hof()
-        # Click hof search
-        self.click("hof_search")
         # Search position
-        ssi_search = 0
-        while ssi_search != 1:
+        ssi_search = 1
+        while ssi_search == 1:
             if not self.running:
                 return
 
-            ssi_search = self.compare_heroes_with_function(0.1, self.search_hof)
-
-            # Click outside search input
-            self.click("outside")
+            ssi_search = self.compare_heroes_with_function(0.3, self.search_hof)
         # Main loop
         while self.running:
 
@@ -120,6 +115,7 @@ class SFGameController():
 
                 if not self.running:
                     return
+                
             self.log("Item(y) nalezen(y).")
             # Wait for 10 minutes and 1 second
             if next_fight != datetime.fromtimestamp(0):
@@ -234,6 +230,8 @@ class SFGameController():
     
     # Search position in hall of fame
     def search_hof(self):
+        # Click hof search
+        self.click("hof_search")
         # Paste position
         pyautogui.write(str(self.spin_box.value()))
         time.sleep(0.1)
@@ -241,6 +239,8 @@ class SFGameController():
         # Search
         pyautogui.press("enter")
         time.sleep(0.1)
+        # Click outside search input
+        self.click("outside")
 
     # Compare two hero screenshots with time delay, calls method between comparasion
     def compare_heroes_with_function(self, delay_between_screenshots: int, func) -> float:
