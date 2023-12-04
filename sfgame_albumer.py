@@ -13,7 +13,7 @@ class SFGameAlbumer(QWidget):
         self.setWindowIcon(QIcon("icon.png"))
 
         # Window title
-        self.setWindowTitle("SFGame albumer")
+        self.setWindowTitle("SFGame albumer v" + self.version)
 
         # App icon fix https://stackoverflow.com/a/1552105/19371130
         myappid = "jsfraz.sfgame-albumer." + self.version  # arbitrary string
