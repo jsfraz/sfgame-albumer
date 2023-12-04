@@ -21,8 +21,8 @@ class SFGameController():
         self.running = False
         # Mouse coordinates
         self.coordinates = {
-            "hof_search": (360, 790),
-            "outside": (10, 50),
+            "hof_search": (560, 790),
+            "outside": (200, 95),
         }
 
         self.version = v
@@ -34,7 +34,7 @@ class SFGameController():
         self.button = b
 
         self.log_display.append("Vítej v programu SFGame Albumer v" + self.version + "!")
-        self.log_display.append("Program funguje pro Steam verzi hry v okně. Pro chod je vyžadován Svatý grál. Je doporučeno vypnout upozornění zpráv. Pokud nepoužíváte houby, spouštějte program pouze pokud není v aréně odpočet. Program také může dělat chyby a vyhodnocovat obraz špatně. Použití na vlastní nebezpečí.")
+        self.log_display.append("Program funguje pro Steam verzi hry v okně s obrazovkou 1920x1080. Pro chod je vyžadován Svatý grál. Je doporučeno vypnout upozornění zpráv. Pokud nepoužíváte houby, spouštějte program pouze pokud není v aréně odpočet. Program také může dělat chyby a vyhodnocovat obraz špatně. Použití na vlastní nebezpečí.")
     
     # Enables/disables widgets
     def set_widgets_enabled(self, enabled: bool):
