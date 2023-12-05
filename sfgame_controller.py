@@ -100,7 +100,6 @@ class SFGameController():
             time.sleep(0.1)
             self.log("Hledám item(y).")
             hero_ssi = self.compare_heroes(1)
-            self.log(str(hero_ssi))
             while hero_ssi == 1:
 
                 if not self.running:
@@ -113,7 +112,6 @@ class SFGameController():
                     pyautogui.press('up')
                 time.sleep(0.1)
                 hero_ssi = self.compare_heroes(1)
-                self.log(str(hero_ssi))
 
                 if not self.running:
                     return
