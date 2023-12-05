@@ -34,7 +34,7 @@ class SFGameController():
         self.button = b
 
         self.log_display.append("Vítej v programu SFGame Albumer v" + self.version + "!")
-        self.log_display.append("Program funguje pro Steam verzi hry v okně s obrazovkou 1920x1080. Pro chod je vyžadován Svatý grál. Je doporučeno vypnout upozornění zpráv. Pokud nepoužíváte houby, spouštějte program pouze pokud není v aréně odpočet. Program také může dělat chyby a vyhodnocovat obraz špatně. Použití na vlastní nebezpečí.")
+        self.log_display.append("Program funguje pro Steam verzi hry v okně (1440x840) s obrazovkou 1920x1080. Pro chod je vyžadován Svatý grál. Je doporučeno vypnout upozornění zpráv. Pokud nepoužíváte houby, spouštějte program pouze pokud není v aréně odpočet. Program také může dělat chyby a vyhodnocovat obraz špatně. Použití na vlastní nebezpečí.")
     
     # Enables/disables widgets
     def set_widgets_enabled(self, enabled: bool):
@@ -194,7 +194,7 @@ class SFGameController():
     # Activate the game window
     def focus_game(self):
         windows = gw.getAllWindows()
-        self.target_window = next((window for window in windows if re.fullmatch(r"Shakes & Fidget", window.title)), None)
+        self.target_window = next((window for window in windows if re.match(r"Shakes & Fidget", window.title)), None)
         try:
             gw.Window(self.target_window._hWnd).activate()
         except Exception as e:
