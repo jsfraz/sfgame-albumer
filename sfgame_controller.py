@@ -308,6 +308,7 @@ class SFGameController():
         self.click("logout")
         self.select_character_screen = self.screenshot()
         self.click("login")
+        time.sleep(1)
 
     # TODO fix fighting enemy right after connecting back
     # Check if character has been disconnected, connect back and open hof
