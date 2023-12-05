@@ -168,7 +168,7 @@ class SFGameController():
             # Skip fight
             self.press("enter")
             # Confirm victory (or loss xd)
-            time.sleep(1)
+            time.sleep(2.5)
             # TODO log win/loss
             self.log("Ukončuju souboj.")
             self.press("enter")
