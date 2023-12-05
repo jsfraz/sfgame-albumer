@@ -194,7 +194,7 @@ class SFGameController():
     # Activate the game window
     def focus_game(self):
         windows = gw.getAllWindows()
-        self.target_window = next((window for window in windows if re.fullmatch(r"^Shakes & Fidget \((.*?)\)$", window.title)), None)
+        self.target_window = next((window for window in windows if re.fullmatch(r"Shakes & Fidget \((.*?)\)$", window.title)), None)
         try:
             gw.Window(self.target_window._hWnd).activate()
         except Exception as e:
