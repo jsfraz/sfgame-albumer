@@ -7,7 +7,7 @@ import pygetwindow as gw
 import pyautogui
 import re
 from datetime import datetime, timedelta
-from PIL import Image
+from PIL import Image, ImageDraw
 from skimage.metrics import structural_similarity as ssim
 import numpy as np
 from PyQt5.QtGui import QTextCursor
@@ -81,7 +81,7 @@ class SFGameController():
             if not self.running:
                 return
 
-            ssi_search = self.compare_heroes_with_function(0.3, self.search_hof)
+            ssi_search = self.compare_heroes_with_function(0.25, self.search_hof)
         # Main loop
         while self.running:
 
@@ -100,7 +100,8 @@ class SFGameController():
             time.sleep(0.1)
             self.log("Hledám item(y).")
             hero_ssi = self.compare_heroes(1)
-            while hero_ssi > 0.99:
+            self.log(str(hero_ssi))
+            while hero_ssi == 1:
 
                 if not self.running:
                     return
@@ -112,6 +113,7 @@ class SFGameController():
                     pyautogui.press('up')
                 time.sleep(0.1)
                 hero_ssi = self.compare_heroes(1)
+                self.log(str(hero_ssi))
 
                 if not self.running:
                     return
@@ -151,7 +153,10 @@ class SFGameController():
             # TODO log win/loss
             self.log("Ukončuju souboj.")
             pyautogui.press("enter")
+        # Stop
         self.log("Končím.")
+        self.set_widgets_enabled(True)
+        
 
     # Log
     def log(self, message: str):
@@ -220,10 +225,10 @@ class SFGameController():
     
     # Compare two hero screenshots with time delay
     def compare_heroes(self, delay_between_screenshots: int) -> float:
-        left, top, width, height = 890, 55, 530, 450
-        screenshot1 = self.screenshot().crop((left, top, left + width, top + height))
+        time.sleep(0.1)
+        screenshot1 = self.crop_hero(self.screenshot())
         time.sleep(delay_between_screenshots)
-        screenshot2 = self.screenshot().crop((left, top, left + width, top + height))
+        screenshot2 = self.crop_hero(self.screenshot())
         # Compare images
         ssi = self.return_ssi(screenshot1, screenshot2)
         return ssi
@@ -244,12 +249,22 @@ class SFGameController():
 
     # Compare two hero screenshots with time delay, calls method between comparasion
     def compare_heroes_with_function(self, delay_between_screenshots: int, func) -> float:
-        left, top, width, height = 890, 55, 530, 450
-        screenshot1 = self.screenshot().crop((left, top, left + width, top + height))
+        time.sleep(0.1)
+        screenshot1 = self.crop_hero(self.screenshot())
         time.sleep(0.1)
         func()
         time.sleep(delay_between_screenshots)
-        screenshot2 = self.screenshot().crop((left, top, left + width, top + height))
+        screenshot2 = self.crop_hero(self.screenshot())
         # Compare images
         ssi = self.return_ssi(screenshot1, screenshot2)
         return ssi
+    
+    # Crop hero and draw black rectangle on fight button position
+    def crop_hero(self, image: Image) -> Image:
+        # Crop
+        left_crop, top_crop, width_crop, height_crop = 890, 55, 530, 450
+        image = image.crop((left_crop, top_crop, left_crop + width_crop, top_crop + height_crop))
+        # Draw rectangle
+        left, top, width, height = 310, 25, 85, 90
+        ImageDraw.Draw(image).rectangle([left, top, left + width, top + height], fill=(0, 0, 0))
+        return image
