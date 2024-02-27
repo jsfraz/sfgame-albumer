@@ -4,7 +4,9 @@ Program pro automatické doplňování alba. Program funguje pro Steam verzi hry
 
 ## Kompilování
 
-```
+```bash
 pip3 install -r requirements.txt
 pyinstaller --name sfgame-albumer-v1.0.0 --windowed --icon icon.ico --onefile main.py
 ```
+
+![Screenshot programu](image.png)
