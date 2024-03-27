@@ -5,7 +5,6 @@ from PyQt5.QtWidgets import QSpinBox, QTextEdit, QPushButton, QRadioButton, QChe
 import psutil
 import pygetwindow as gw
 import pyautogui
-import re
 from datetime import datetime, timedelta
 from PIL import Image, ImageDraw
 from skimage.metrics import structural_similarity as ssim
@@ -193,9 +192,13 @@ class SFGameController():
     
     # Activate the game window
     def focus_game(self):
-        windows = gw.getAllWindows()
-        self.target_window = next((window for window in windows if re.match(r"Shakes & Fidget", window.title)), None)
+        # self.target_window = next((window for window in windows if re.match(r"Shakes & Fidget", window.title)), None)
+        for window in gw.getAllWindows():
+            if "Shakes & Fidget" in window.title:
+                self.target_window = window
+                break
         try:
+            
             gw.Window(self.target_window._hWnd).activate()
         except Exception as e:
             self.log(str(e))
