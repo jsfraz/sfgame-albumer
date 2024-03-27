@@ -3,7 +3,7 @@ from PyQt5.QtWidgets import QApplication
 
 from sfgame_albumer import SFGameAlbumer
 
-version = "1.0.0"
+version = "1.0.1"
 
 if __name__ == "__main__":
     # Create a Qt application instance
